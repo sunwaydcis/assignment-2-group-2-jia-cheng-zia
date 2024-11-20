@@ -43,4 +43,13 @@ object MyApp extends JFXApp3:
         (state, (totalBeds, covidBeds))
       }
 
+  // Calculate ratios and find state with highest total beds
+    val stateRatios = stateBedsMap.map { case (state, (total, covid)) =>
+      val ratio = if (total > 0) covid.toDouble / total else 0.0
+      (state, total, covid, ratio)
+    }
+
+  // Find state with highest total beds
+    val (stateWithMaxBeds, totalBeds, covidBeds, ratio) = stateRatios.maxBy(_._2)
+
 end MyApp
