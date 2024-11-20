@@ -3,6 +3,7 @@ import scalafx.application.JFXApp3.PrimaryStage
 
 import scala.io.Source
 import Source.fromFile
+import org.apache.commons.csv.{CSVFormat, CSVParser}
 
 
 object MyApp extends JFXApp3:
