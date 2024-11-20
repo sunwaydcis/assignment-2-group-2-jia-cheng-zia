@@ -3,7 +3,8 @@ import scalafx.application.JFXApp3.PrimaryStage
 
 import scala.io.Source
 import Source.fromFile
-import org.apache.commons.csv.{CSVFormat, CSVParser}
+import com.github.tototoshi.csv._
+import java.io.File
 
 
 object MyApp extends JFXApp3:
@@ -18,7 +19,6 @@ object MyApp extends JFXApp3:
   //scalaFileContents.foreach(println)
 
   //csv read 
-  val reader = Files.newBufferedReader(Paths.get(csvFilePath))
-  val csvParser = CSVParser.parse(reader, CSVFormat.DEFAULT.withHeader())
+  val reader = CSVReader.open(new File(csvFilePath))
 
 end MyApp
