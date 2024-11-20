@@ -10,20 +10,14 @@ object MyApp extends JFXApp3:
   override def start(): Unit =
     stage = new PrimaryStage()
 
-  val filePath = "src/main/resources/hospital.csv"
+  val csvFilePath = "src/main/resources/hospital.csv"
 
   //version 1
   //val scalaFileContents: Iterator[String] = Source.fromFile(filePath).getLines
   //scalaFileContents.foreach(println)
 
-  //version2(does not work yet might use the above one)
-  def open(path: String) = new File(filePath)
-  
-  implicit class RichFile(file: File){
-    def read() = Source.fromFile(file).getLines
-  }
-  
-  val readLikeABoss = open(filePath).read
-  readLikeABoss.foreach(println)
+  //csv read 
+  val reader = Files.newBufferedReader(Paths.get(csvFilePath))
+  val csvParser = CSVParser.parse(reader, CSVFormat.DEFAULT.withHeader())
 
 end MyApp
