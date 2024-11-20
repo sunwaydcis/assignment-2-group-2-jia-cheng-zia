@@ -21,4 +21,7 @@ object MyApp extends JFXApp3:
   //csv read 
   val reader = CSVReader.open(new File(csvFilePath))
 
+  // Read all rows and skip the header
+  val rows = reader.allWithHeaders()
+
 end MyApp
