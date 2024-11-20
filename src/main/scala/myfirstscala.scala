@@ -24,4 +24,23 @@ object MyApp extends JFXApp3:
   // Read all rows and skip the header
   val rows = reader.allWithHeaders()
 
+  // Calculate total beds and COVID beds for each state
+    val stateBedsMap = rows
+      .groupBy(_("state")) // Group by state
+      .map { case (state, hospitals) =>
+        val totalBeds = hospitals
+          .map(_("beds").trim)
+          .filter(_.nonEmpty)
+          .map(_.toInt)
+          .sum
+
+        val covidBeds = hospitals
+          .map(_("beds_covid").trim)
+          .filter(_.nonEmpty)
+          .map(_.toInt)
+          .sum
+
+        (state, (totalBeds, covidBeds))
+      }
+
 end MyApp
