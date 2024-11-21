@@ -52,4 +52,14 @@ object MyApp extends JFXApp3:
   // Find state with highest total beds
     val (stateWithMaxBeds, totalBeds, covidBeds, ratio) = stateRatios.maxBy(_._2)
 
+    println(s"\nState with highest number of hospital beds: $stateWithMaxBeds")
+    println(s"Total beds: $totalBeds")
+    println(s"COVID-19 dedicated beds: $covidBeds")
+    println(f"Ratio of COVID-19 beds to total beds: ${ratio * 100}%.2f%%")
+
+    println("\nRatio of COVID-19 beds to total beds for all states:")
+    stateRatios.toList.sortBy(-_._4).foreach { case (state, total, covid, ratio) =>
+      println(f"$state: ${ratio * 100}%.2f%% ($covid COVID beds out of $total total beds)")
+    }
+
 end MyApp
