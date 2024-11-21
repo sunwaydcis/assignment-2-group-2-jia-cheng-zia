@@ -62,4 +62,19 @@ object MyApp extends JFXApp3:
       println(f"$state: ${ratio * 100}%.2f%% ($covid COVID beds out of $total total beds)")
     }
 
+   // Calculate averages by state for each category
+      val stateAdmissionStats = rows
+        .groupBy(_("state"))
+        .map { case (state, records) =>
+  
+          // Calculate averages for each category
+          val avgPUI = safeAvg("admitted_pui")
+          val avgCovid = safeAvg("admitted_covid")
+          val avgTotal = safeAvg("admitted_total")
+          // Non-COVID admissions can be derived from total minus (PUI + COVID)
+          val avgNonCovid = math.max(0.0, avgTotal - (avgPUI + avgCovid))
+  
+          (state, (avgPUI, avgCovid, avgNonCovid))
+        }
+
 end MyApp
