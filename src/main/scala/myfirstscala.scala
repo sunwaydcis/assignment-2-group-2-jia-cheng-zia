@@ -85,4 +85,11 @@ object MyApp extends JFXApp3:
           (state, (avgPUI, avgCovid, avgNonCovid))
         }
 
+    // Print results
+        println("\nAverage Daily Admissions by Category for Each State:")
+        println("=" * 80)
+        println(f"%%-20s | %%-15s | %%-15s | %%-15s".format(
+          "State", "Suspected/PUI", "COVID-19", "Non-COVID"))
+        println("=" * 80)
+
 end MyApp
