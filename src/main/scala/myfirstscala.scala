@@ -66,6 +66,14 @@ object MyApp extends JFXApp3:
       val stateAdmissionStats = rows
         .groupBy(_("state"))
         .map { case (state, records) =>
+          // Helper function to safely parse numbers
+          def safeAvg(column: String): Double = {
+            val validNumbers = records
+              .map(_(column).trim)
+              .filter(_.nonEmpty)
+              .map(_.toDouble)
+            if (validNumbers.isEmpty) 0.0 else validNumbers.sum / validNumbers.size
+          }
   
           // Calculate averages for each category
           val avgPUI = safeAvg("admitted_pui")
