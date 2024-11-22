@@ -99,4 +99,11 @@ object MyApp extends JFXApp3:
                 state, pui, covid, nonCovid))
             }
 
+  // Calculate and print overall averages
+      val overallStats = stateAdmissionStats.values.foldLeft((0.0, 0.0, 0.0)) {
+        case ((totalPUI, totalCovid, totalNonCovid), (pui, covid, nonCovid)) =>
+          (totalPUI + pui, totalCovid + covid, totalNonCovid + nonCovid)
+      }
+      val stateCount = stateAdmissionStats.size
+
 end MyApp
