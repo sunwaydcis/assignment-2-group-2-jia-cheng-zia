@@ -18,13 +18,13 @@ object MyApp extends JFXApp3:
   //val scalaFileContents: Iterator[String] = Source.fromFile(filePath).getLines
   //scalaFileContents.foreach(println)
 
-  //csv read 
   val reader = CSVReader.open(new File(csvFilePath))
 
-  // Read all rows and skip the header
-  val rows = reader.allWithHeaders()
+  try {
+    // Read all rows and skip the header
+    val rows = reader.allWithHeaders()
 
-  // Calculate total beds and COVID beds for each state
+    // Calculate total beds and COVID beds for each state
     val stateBedsMap = rows
       .groupBy(_("state")) // Group by state
       .map { case (state, hospitals) =>
@@ -43,13 +43,13 @@ object MyApp extends JFXApp3:
         (state, (totalBeds, covidBeds))
       }
 
-  // Calculate ratios and find state with highest total beds
+    // Calculate ratios and find state with highest total beds
     val stateRatios = stateBedsMap.map { case (state, (total, covid)) =>
       val ratio = if (total > 0) covid.toDouble / total else 0.0
       (state, total, covid, ratio)
     }
 
-  // Find state with highest total beds
+    // Find state with highest total beds
     val (stateWithMaxBeds, totalBeds, covidBeds, ratio) = stateRatios.maxBy(_._2)
 
     println(s"\nState with highest number of hospital beds: $stateWithMaxBeds")
@@ -62,54 +62,61 @@ object MyApp extends JFXApp3:
       println(f"$state: ${ratio * 100}%.2f%% ($covid COVID beds out of $total total beds)")
     }
 
-   // Calculate averages by state for each category
-      val stateAdmissionStats = rows
-        .groupBy(_("state"))
-        .map { case (state, records) =>
-          // Helper function to safely parse numbers
-          def safeAvg(column: String): Double = {
-            val validNumbers = records
-              .map(_(column).trim)
-              .filter(_.nonEmpty)
-              .map(_.toDouble)
-            if (validNumbers.isEmpty) 0.0 else validNumbers.sum / validNumbers.size
-          }
-  
-          // Calculate averages for each category
-          val avgPUI = safeAvg("admitted_pui")
-          val avgCovid = safeAvg("admitted_covid")
-          val avgTotal = safeAvg("admitted_total")
-          // Non-COVID admissions can be derived from total minus (PUI + COVID)
-          val avgNonCovid = math.max(0.0, avgTotal - (avgPUI + avgCovid))
-  
-          (state, (avgPUI, avgCovid, avgNonCovid))
+    // Calculate averages by state for each category
+    val stateAdmissionStats = rows
+      .groupBy(_("state"))
+      .map { case (state, records) =>
+        // Helper function to safely parse numbers
+        def safeAvg(column: String): Double = {
+          val validNumbers = records
+            .map(_(column).trim)
+            .filter(_.nonEmpty)
+            .map(_.toDouble)
+          if (validNumbers.isEmpty) 0.0 else validNumbers.sum / validNumbers.size
         }
 
-    // Print results
-        println("\nAverage Daily Admissions by Category for Each State:")
-        println("=" * 80)
-        println(f"%%-20s | %%-15s | %%-15s | %%-15s".format(
-          "State", "Suspected/PUI", "COVID-19", "Non-COVID"))
-        println("=" * 80)
+        // Calculate averages for each category
+        val avgPUI = safeAvg("admitted_pui")
+        val avgCovid = safeAvg("admitted_covid")
+        val avgTotal = safeAvg("admitted_total")
+        // Non-COVID admissions can be derived from total minus (PUI + COVID)
+        val avgNonCovid = math.max(0.0, avgTotal - (avgPUI + avgCovid))
 
-      stateAdmissionStats.toList
-            .sortBy(_._1) // Sort by state name
-            .foreach { case (state, (pui, covid, nonCovid)) =>
-              println(f"%%-20s | %%-15.2f | %%-15.2f | %%-15.2f".format(
-                state, pui, covid, nonCovid))
-            }
-
-  // Calculate and print overall averages
-      val overallStats = stateAdmissionStats.values.foldLeft((0.0, 0.0, 0.0)) {
-        case ((totalPUI, totalCovid, totalNonCovid), (pui, covid, nonCovid)) =>
-          (totalPUI + pui, totalCovid + covid, totalNonCovid + nonCovid)
+        (state, (avgPUI, avgCovid, avgNonCovid))
       }
-      val stateCount = stateAdmissionStats.size
+
+    // Print results
+    println("\nAverage Daily Admissions by Category for Each State:")
+    println("=" * 80)
+    println(f"%%-20s | %%-15s | %%-15s | %%-15s".format(
+      "State", "Suspected/PUI", "COVID-19", "Non-COVID"))
+    println("=" * 80)
+
+    stateAdmissionStats.toList
+      .sortBy(_._1) // Sort by state name
+      .foreach { case (state, (pui, covid, nonCovid)) =>
+        println(f"%%-20s | %%-15.2f | %%-15.2f | %%-15.2f".format(
+          state, pui, covid, nonCovid))
+      }
+
+    // Calculate and print overall averages
+    val overallStats = stateAdmissionStats.values.foldLeft((0.0, 0.0, 0.0)) {
+      case ((totalPUI, totalCovid, totalNonCovid), (pui, covid, nonCovid)) =>
+        (totalPUI + pui, totalCovid + covid, totalNonCovid + nonCovid)
+    }
+    val stateCount = stateAdmissionStats.size
 
     println("\nOverall Daily Averages Across All States:")
-        println("=" * 80)
-        println(f"Suspected/PUI: ${overallStats._1 / stateCount}%.2f")
-        println(f"COVID-19 Positive: ${overallStats._2 / stateCount}%.2f")
-        println(f"Non-COVID: ${overallStats._3 / stateCount}%.2f")
+    println("=" * 80)
+    println(f"Suspected/PUI: ${overallStats._1 / stateCount}%.2f")
+    println(f"COVID-19 Positive: ${overallStats._2 / stateCount}%.2f")
+    println(f"Non-COVID: ${overallStats._3 / stateCount}%.2f")
 
-end MyApp
+  } catch {
+    case e: Exception =>
+      println(s"An error occurred: ${e.getMessage}")
+      e.printStackTrace()
+  } finally {
+    reader.close()
+  }
+}
