@@ -92,4 +92,11 @@ object MyApp extends JFXApp3:
           "State", "Suspected/PUI", "COVID-19", "Non-COVID"))
         println("=" * 80)
 
+      stateAdmissionStats.toList
+            .sortBy(_._1) // Sort by state name
+            .foreach { case (state, (pui, covid, nonCovid)) =>
+              println(f"%%-20s | %%-15.2f | %%-15.2f | %%-15.2f".format(
+                state, pui, covid, nonCovid))
+            }
+
 end MyApp
