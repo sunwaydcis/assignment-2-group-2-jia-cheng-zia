@@ -106,4 +106,10 @@ object MyApp extends JFXApp3:
       }
       val stateCount = stateAdmissionStats.size
 
+    println("\nOverall Daily Averages Across All States:")
+        println("=" * 80)
+        println(f"Suspected/PUI: ${overallStats._1 / stateCount}%.2f")
+        println(f"COVID-19 Positive: ${overallStats._2 / stateCount}%.2f")
+        println(f"Non-COVID: ${overallStats._3 / stateCount}%.2f")
+
 end MyApp
