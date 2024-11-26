@@ -1,16 +1,8 @@
-import scalafx.application.JFXApp3
-import scalafx.application.JFXApp3.PrimaryStage
-
-import scala.io.Source
-import Source.fromFile
 import com.github.tototoshi.csv._
 import java.io.File
 
 
 object MyApp extends JFXApp3:
-
-  override def start(): Unit =
-    stage = new PrimaryStage()
 
   val csvFilePath = "src/main/resources/hospital.csv"
 
