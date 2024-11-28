@@ -1,3 +1,5 @@
+import scalafx.application.JFXApp3
+import scalafx.application.JFXApp3.PrimaryStage
 import scala.io.Source
 import Source.fromFile
 import com.github.tototoshi.csv._
