@@ -1,18 +1,15 @@
 import scalafx.application.JFXApp3
 import scalafx.application.JFXApp3.PrimaryStage
-import scala.io.Source
-import Source.fromFile
 import com.github.tototoshi.csv._
 import java.io.File
 
 
 object MyApp extends JFXApp3:
 
-  val csvFilePath = "src/main/resources/hospital.csv"
+  override def start(): Unit =
+    stage = new PrimaryStage()
 
-  //version 1
-  //val scalaFileContents: Iterator[String] = Source.fromFile(filePath).getLines
-  //scalaFileContents.foreach(println)
+  val csvFilePath = "src/main/resources/hospital.csv"
 
   val reader = CSVReader.open(new File(csvFilePath))
 
